@@ -1,0 +1,58 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36" version="28.2.4">
+  <diagram name="Página-1" id="Gt66E5zynTHzhx5hBwpI">
+    <mxGraphModel dx="1426" dy="790" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="vrYcx8my0ZzZRveAh0a--1" value="ALUMNOS" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="340" width="160" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--5" value="nombre" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="vrYcx8my0ZzZRveAh0a--1">
+          <mxGeometry x="10" y="65" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--4" value="alumno_id" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="vrYcx8my0ZzZRveAh0a--1">
+          <mxGeometry x="8" y="35" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--2" value="BOOTCAMPS" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="334" y="340" width="160" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--9" value="nombre" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="vrYcx8my0ZzZRveAh0a--2">
+          <mxGeometry x="4" y="60" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--10" value="profesor_id" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="vrYcx8my0ZzZRveAh0a--2">
+          <mxGeometry x="3" y="90" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--6" value="bootcamp_id" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="vrYcx8my0ZzZRveAh0a--2">
+          <mxGeometry x="3" y="30" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--3" value="PROFESORES" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="334" y="80" width="160" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--12" value="especialidad" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="vrYcx8my0ZzZRveAh0a--3">
+          <mxGeometry x="13" y="76" width="90" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--13" value="año de incorporación" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="vrYcx8my0ZzZRveAh0a--3">
+          <mxGeometry x="11" y="99" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--11" value="profesor_id" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="349" y="110" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--14" value="CURSOS ONLINE" style="swimlane;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="600" y="340" width="160" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--15" value="nombre" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="vrYcx8my0ZzZRveAh0a--14">
+          <mxGeometry x="3" y="62" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--16" value="profesor_id" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="vrYcx8my0ZzZRveAh0a--14">
+          <mxGeometry x="3" y="92" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--17" value="curso_id" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="vrYcx8my0ZzZRveAh0a--14">
+          <mxGeometry x="1" y="32" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="vrYcx8my0ZzZRveAh0a--18" value="nombre" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="348" y="133" width="60" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
