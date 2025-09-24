@@ -137,8 +137,8 @@
         </mxCell>
         <mxCell id="ixe7OheFEb5oqjiclXjT-25" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="230" y="390" as="sourcePoint" />
-            <mxPoint x="320" y="390" as="targetPoint" />
+            <mxPoint x="334" y="390" as="sourcePoint" />
+            <mxPoint x="254" y="390" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="ixe7OheFEb5oqjiclXjT-30" value="N" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
@@ -148,7 +148,7 @@
           <mxGeometry x="540" y="380" width="30" height="30" as="geometry" />
         </mxCell>
         <mxCell id="ixe7OheFEb5oqjiclXjT-32" value="N" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="260" y="360" width="30" height="30" as="geometry" />
+          <mxGeometry x="280" y="360" width="30" height="30" as="geometry" />
         </mxCell>
         <mxCell id="ixe7OheFEb5oqjiclXjT-36" value="BOOTCAMP_PROFESOR" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fillColor=#B5739D;" vertex="1" parent="1">
           <mxGeometry x="100" y="120" width="160" height="90" as="geometry" />
@@ -189,6 +189,15 @@
         </mxCell>
         <mxCell id="ixe7OheFEb5oqjiclXjT-53" value="N:N" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
           <mxGeometry x="600" y="220" width="40" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ixe7OheFEb5oqjiclXjT-54" value="N" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="780" y="350" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ixe7OheFEb5oqjiclXjT-55" value="N" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="270" y="270" width="30" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ixe7OheFEb5oqjiclXjT-56" value="N" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="280" y="163" width="30" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
