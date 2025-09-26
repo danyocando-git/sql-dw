@@ -88,7 +88,50 @@ CREATE TABLE alumno_curso_online (
 
 
 
--- EJERCICIO 3: CREAR TABLA ivr_detail
+-- EJERCICIO 3: CREACIÓN DE LA TABLA ivr_detail
+
+CREATE OR REPLACE TABLE keepcoding.ivr_detail AS
+SELECT
+  -- Campos de ivr_calls
+  c.ivr_id,
+  c.phone_number,
+  c.ivr_result,
+  c.vdn_label,
+  c.start_date,
+  CAST(FORMAT_DATE('%Y%m%d', DATE(c.start_date)) AS INT64) AS start_date_id,
+  c.end_date,
+  CAST(FORMAT_DATE('%Y%m%d', DATE(c.end_date)) AS INT64)   AS end_date_id,
+  c.total_duration,
+  c.customer_segment,
+  c.ivr_language,
+  c.steps_module,
+  c.module_aggregation,
+
+  -- Campos de ivr_modules
+  m.module_sequece,
+  m.module_name,
+  m.module_duration,
+  m.module_result,
+
+  -- Campos de ivr_steps
+  s.step_sequence,
+  s.step_name,
+  s.step_result,
+  s.step_description_error,
+  s.document_type,
+  s.document_identification,
+  s.customer_phone,
+  s.billing_account_id
+
+FROM keepcoding.ivr_steps s
+JOIN keepcoding.ivr_modules m
+  ON s.ivr_id = m.ivr_id
+ AND s.module_sequece = m.module_sequece
+JOIN keepcoding.ivr_calls c
+  ON m.ivr_id = c.ivr_id;
+
+
+  
 
  
 
