@@ -685,3 +685,34 @@ LEFT JOIN steps_per_call spc
 
 
 
+-- EJERCICIO 12: CREAR TABLA ivr_summary A PARTIR DE ivr_detail
+-- Usé sólo ROW_NUMBER y QUALIFY que vimos - Hasta aquí legué, no supe como investigar más para completarlo
+
+CREATE OR REPLACE TABLE keepcoding.ivr_summary AS
+SELECT
+  CAST(ivr_id AS STRING) AS ivr_id,
+  phone_number,
+  ivr_result,
+  vdn_aggregation,
+  start_date,
+  end_date,
+  total_duration,
+  customer_segment,
+  ivr_language,
+  steps_module,
+  module_aggregation,
+  document_type_aggregation AS document_type,
+  document_identification,
+  customer_phone_aggregation AS customer_phone,
+  billing_account_id_aggregation AS billing_account_id,
+
+  -- placeholders de columnas que se crearán en ejercicios posteriores
+  NULL AS masiva_lg,
+  NULL AS info_by_phone_lg,
+  NULL AS info_by_dni_lg,
+  NULL AS repeated_phone_24H,
+  NULL AS cause_recall_phone_24H,
+
+  ROW_NUMBER() OVER (PARTITION BY CAST(ivr_id AS STRING) ORDER BY end_date DESC) AS rn
+FROM keepcoding.ivr_detail
+QUALIFY rn = 1;
