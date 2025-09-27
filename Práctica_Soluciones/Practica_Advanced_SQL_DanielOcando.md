@@ -685,7 +685,7 @@ LEFT JOIN steps_per_call spc
 
 
 
--- EJERCICIO 12: CREAR TABLA ivr_summary A PARTIR DE ivr_detail
+-- EJERCICIO 12: CREAR TABLA ivr_summary
 -- Usé sólo ROW_NUMBER y QUALIFY que vimos - Hasta aquí legué, no supe como investigar más para completarlo
 
 CREATE OR REPLACE TABLE keepcoding.ivr_summary AS
