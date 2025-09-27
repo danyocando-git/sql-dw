@@ -481,6 +481,101 @@ LEFT JOIN phone_per_call p
   ON c.ivr_id = p.ivr_id
 LEFT JOIN billing_per_call b
   ON c.ivr_id = b.ivr_id;
+
+
+
+
+  -- EJERCICIO 8: CREACIÓN DE ivr_detail CON EL CAMPO total_modules
+
+CREATE OR REPLACE TABLE keepcoding.ivr_detail AS
+WITH modules_per_call AS (
+  SELECT
+    ivr_id,
+    COUNT(DISTINCT module_sequece) AS total_modules
+  FROM keepcoding.ivr_modules
+  GROUP BY ivr_id
+),
+vdn_per_call AS (
+  SELECT
+    ivr_id,
+    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT vdn_label ORDER BY vdn_label), ',') AS vdn_aggregation
+  FROM keepcoding.ivr_calls
+  GROUP BY ivr_id
+),
+doc_per_call AS (
+  SELECT
+    ivr_id,
+    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT document_type ORDER BY document_type), ',') AS document_type_aggregation
+  FROM keepcoding.ivr_steps
+  GROUP BY ivr_id
+),
+phone_per_call AS (
+  SELECT
+    ivr_id,
+    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT customer_phone ORDER BY customer_phone), ',') AS customer_phone_aggregation
+  FROM keepcoding.ivr_steps
+  GROUP BY ivr_id
+),
+billing_per_call AS (
+  SELECT
+    ivr_id,
+    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT billing_account_id ORDER BY billing_account_id), ',') AS billing_account_id_aggregation
+  FROM keepcoding.ivr_steps
+  GROUP BY ivr_id
+)
+SELECT
+  -- Campos de ivr_calls
+  c.ivr_id,
+  c.phone_number,
+  c.ivr_result,
+  c.vdn_label,
+  c.start_date,
+  CAST(FORMAT_DATE('%Y%m%d', DATE(c.start_date)) AS INT64) AS start_date_id,
+  c.end_date,
+  CAST(FORMAT_DATE('%Y%m%d', DATE(c.end_date)) AS INT64)   AS end_date_id,
+  c.total_duration,
+  c.customer_segment,
+  c.ivr_language,
+  c.steps_module,
+  c.module_aggregation,
+  v.vdn_aggregation,
+  d.document_type_aggregation,
+  p.customer_phone_aggregation,
+  b.billing_account_id_aggregation,
+  mpc.total_modules,
+
+  -- Campos de ivr_modules
+  m.module_sequece,
+  m.module_name,
+  m.module_duration,
+  m.module_result,
+
+  -- Campos de ivr_steps
+  s.step_sequence,
+  s.step_name,
+  s.step_result,
+  s.step_description_error,
+  s.document_type,
+  s.document_identification,
+  s.customer_phone,
+  s.billing_account_id
+
+FROM keepcoding.ivr_steps s
+JOIN keepcoding.ivr_modules m
+  ON s.ivr_id = m.ivr_id
+ AND s.module_sequece = m.module_sequece
+JOIN keepcoding.ivr_calls c
+  ON m.ivr_id = c.ivr_id
+LEFT JOIN vdn_per_call v
+  ON c.ivr_id = v.ivr_id
+LEFT JOIN doc_per_call d
+  ON c.ivr_id = d.ivr_id
+LEFT JOIN phone_per_call p
+  ON c.ivr_id = p.ivr_id
+LEFT JOIN billing_per_call b
+  ON c.ivr_id = b.ivr_id
+LEFT JOIN modules_per_call mpc
+  ON c.ivr_id = mpc.ivr_id;
  
 
 
