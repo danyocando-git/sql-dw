@@ -264,7 +264,7 @@ FROM base;
 
 
 -- EJERCICIO 12: Crear tabla ivr_summary
--- Lo intenté hacer con ROW_NUMBER pero no me salió y ya no tengo más tiempo
+-- Lo intenté hacer con ROW_NUMBER pero no me salió y ya no tengo más tiempo ni cabeza
 
 CREATE OR REPLACE TABLE keepcoding.ivr_summary AS
 SELECT
@@ -295,7 +295,7 @@ GROUP BY calls_ivr_id;
 
 
 -- EJERCICIO 13: CREAR FUNCIÓN DE LIMPIEZA DE ENTEROS
---Encontré la función clean_integer
+-- Lo que encontré investigando fue la función clean_integer
 
 CREATE OR REPLACE FUNCTION keepcoding.clean_integer(val INT64)
 RETURNS INT64
