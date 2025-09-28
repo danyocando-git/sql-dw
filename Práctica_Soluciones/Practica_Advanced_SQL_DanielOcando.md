@@ -1,4 +1,4 @@
--- EJERCICIO 2: CREACIÓN DE TABLAS PARA LA PRÁCTICA KEEP CODING
+-- EJERCICIO 2: CREACIÓN DE BASES DE DATOS
 
 -- Tabla PROFESORES
 CREATE TABLE profesores (
@@ -87,632 +87,218 @@ CREATE TABLE alumno_curso_online (
 
 
 
--- EJERCICIO 3: CREACIÓN DE LA TABLA ivr_detail
+-- EJERCICIO 3: CREAR TABLA DE ivr_detail
 
 CREATE OR REPLACE TABLE keepcoding.ivr_detail AS
 SELECT
-  -- Campos de ivr_calls
-  c.ivr_id,
-  c.phone_number,
-  c.ivr_result,
-  c.vdn_label,
-  c.start_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.start_date)) AS INT64) AS start_date_id,
-  c.end_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.end_date)) AS INT64)   AS end_date_id,
-  c.total_duration,
-  c.customer_segment,
-  c.ivr_language,
-  c.steps_module,
-  c.module_aggregation,
-
-  -- Campos de ivr_modules
-  m.module_sequece,
-  m.module_name,
-  m.module_duration,
-  m.module_result,
-
-  -- Campos de ivr_steps
-  s.step_sequence,
-  s.step_name,
-  s.step_result,
-  s.step_description_error,
-  s.document_type,
-  s.document_identification,
-  s.customer_phone,
-  s.billing_account_id
-
-FROM keepcoding.ivr_steps s
-JOIN keepcoding.ivr_modules m
-  ON s.ivr_id = m.ivr_id
- AND s.module_sequece = m.module_sequece
-JOIN keepcoding.ivr_calls c
-  ON m.ivr_id = c.ivr_id;
+  c.ivr_id                 AS calls_ivr_id,
+  c.phone_number           AS calls_phone_number,
+  c.ivr_result             AS calls_ivr_result,
+  c.vdn_label              AS calls_vdn_label,
+  c.start_date             AS calls_start_date,
+  CAST(FORMAT_DATE('%Y%m%d', DATE(c.start_date)) AS INT64) AS calls_start_date_id,
+  c.end_date               AS calls_end_date,
+  CAST(FORMAT_DATE('%Y%m%d', DATE(c.end_date)) AS INT64)   AS calls_end_date_id,
+  c.total_duration         AS calls_total_duration,
+  c.customer_segment       AS calls_customer_segment,
+  c.ivr_language           AS calls_ivr_language,
+  c.steps_module           AS calls_steps_module,
+  c.module_aggregation     AS calls_module_aggregation,
+  m.module_sequece         AS module_sequece,
+  m.module_name            AS module_name,
+  m.module_duration        AS module_duration,
+  m.module_result          AS module_result,
+  s.step_sequence          AS step_sequence,
+  s.step_name              AS step_name,
+  s.step_result            AS step_result,
+  s.step_description_error AS step_description_error,
+  s.document_type          AS document_type,
+  s.document_identification AS document_identification,
+  s.customer_phone         AS customer_phone,
+  s.billing_account_id     AS billing_account_id
+FROM keepcoding.ivr_calls c
+INNER JOIN keepcoding.ivr_modules m
+  ON c.ivr_id = m.ivr_id
+INNER JOIN keepcoding.ivr_steps s
+  ON m.ivr_id = s.ivr_id
+ AND m.module_sequece = s.module_sequece;
 
 
 
 
-  -- EJERCICIO 4: CREACIÓN DE ivr_detail CON EL CAMPO vdn_aggregation
+-- EJERCICIO 4: Generar el campo vdn_aggregation
 
 CREATE OR REPLACE TABLE keepcoding.ivr_detail AS
-WITH vdn_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT vdn_label ORDER BY vdn_label), ',') AS vdn_aggregation
-  FROM keepcoding.ivr_calls
-  GROUP BY ivr_id
-)
 SELECT
-  -- Campos de ivr_calls
-  c.ivr_id,
-  c.phone_number,
-  c.ivr_result,
-  c.vdn_label,
-  c.start_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.start_date)) AS INT64) AS start_date_id,
-  c.end_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.end_date)) AS INT64)   AS end_date_id,
-  c.total_duration,
-  c.customer_segment,
-  c.ivr_language,
-  c.steps_module,
-  c.module_aggregation,
-  v.vdn_aggregation,
-
-  -- Campos de ivr_modules
-  m.module_sequece,
-  m.module_name,
-  m.module_duration,
-  m.module_result,
-
-  -- Campos de ivr_steps
-  s.step_sequence,
-  s.step_name,
-  s.step_result,
-  s.step_description_error,
-  s.document_type,
-  s.document_identification,
-  s.customer_phone,
-  s.billing_account_id
-
-FROM keepcoding.ivr_steps s
-JOIN keepcoding.ivr_modules m
-  ON s.ivr_id = m.ivr_id
- AND s.module_sequece = m.module_sequece
-JOIN keepcoding.ivr_calls c
-  ON m.ivr_id = c.ivr_id
-LEFT JOIN vdn_per_call v
-  ON c.ivr_id = v.ivr_id;
+  calls_ivr_id,
+  CASE
+    WHEN calls_vdn_label LIKE 'ATC%' THEN 'FRONT'
+    WHEN calls_vdn_label LIKE 'TECH%' THEN 'TECH'
+    WHEN calls_vdn_label = 'ABSORPTION' THEN 'ABSORPTION'
+    ELSE 'RESTO'
+  END AS vdn_aggregation
+FROM keepcoding.ivr_detail;
 
 
 
 
--- EJERCICIO 5: CREACIÓN DE ivr_detail CON EL CAMPO document_type_aggregation
+-- EJERCICIO 5: Generar los campos document_type y document_identification
 
 CREATE OR REPLACE TABLE keepcoding.ivr_detail AS
-WITH doc_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT document_type ORDER BY document_type), ',') AS document_type_aggregation
-  FROM keepcoding.ivr_steps
-  GROUP BY ivr_id
-)
 SELECT
-  -- Campos de ivr_calls
-  c.ivr_id,
-  c.phone_number,
-  c.ivr_result,
-  c.vdn_label,
-  c.start_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.start_date)) AS INT64) AS start_date_id,
-  c.end_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.end_date)) AS INT64)   AS end_date_id,
-  c.total_duration,
-  c.customer_segment,
-  c.ivr_language,
-  c.steps_module,
-  c.module_aggregation,
-  v.vdn_aggregation,
-  d.document_type_aggregation,
-
-  -- Campos de ivr_modules
-  m.module_sequece,
-  m.module_name,
-  m.module_duration,
-  m.module_result,
-
-  -- Campos de ivr_steps
-  s.step_sequence,
-  s.step_name,
-  s.step_result,
-  s.step_description_error,
-  s.document_type,
-  s.document_identification,
-  s.customer_phone,
-  s.billing_account_id
-
-FROM keepcoding.ivr_steps s
-JOIN keepcoding.ivr_modules m
-  ON s.ivr_id = m.ivr_id
- AND s.module_sequece = m.module_sequece
-JOIN keepcoding.ivr_calls c
-  ON m.ivr_id = c.ivr_id
-LEFT JOIN (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT vdn_label ORDER BY vdn_label), ',') AS vdn_aggregation
-  FROM keepcoding.ivr_calls
-  GROUP BY ivr_id
-) v
-  ON c.ivr_id = v.ivr_id
-LEFT JOIN doc_per_call d
-  ON c.ivr_id = d.ivr_id;
+  calls_ivr_id,
+  MIN(document_type) AS document_type,
+  MIN(document_identification) AS document_identification
+FROM keepcoding.ivr_detail
+GROUP BY calls_ivr_id;
 
 
 
-
-  -- EJERCICIO 5: CREACIÓN DE ivr_detail CON EL CAMPO document_type_aggregation
+-- EJERCICIO 6: Generar el campo customer_phone
 
 CREATE OR REPLACE TABLE keepcoding.ivr_detail AS
-WITH doc_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT document_type ORDER BY document_type), ',') AS document_type_aggregation
-  FROM keepcoding.ivr_steps
-  GROUP BY ivr_id
-)
 SELECT
-  -- Campos de ivr_calls
-  c.ivr_id,
-  c.phone_number,
-  c.ivr_result,
-  c.vdn_label,
-  c.start_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.start_date)) AS INT64) AS start_date_id,
-  c.end_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.end_date)) AS INT64)   AS end_date_id,
-  c.total_duration,
-  c.customer_segment,
-  c.ivr_language,
-  c.steps_module,
-  c.module_aggregation,
-  v.vdn_aggregation,
-  d.document_type_aggregation,
-
-  -- Campos de ivr_modules
-  m.module_sequece,
-  m.module_name,
-  m.module_duration,
-  m.module_result,
-
-  -- Campos de ivr_steps
-  s.step_sequence,
-  s.step_name,
-  s.step_result,
-  s.step_description_error,
-  s.document_type,
-  s.document_identification,
-  s.customer_phone,
-  s.billing_account_id
-
-FROM keepcoding.ivr_steps s
-JOIN keepcoding.ivr_modules m
-  ON s.ivr_id = m.ivr_id
- AND s.module_sequece = m.module_sequece
-JOIN keepcoding.ivr_calls c
-  ON m.ivr_id = c.ivr_id
-LEFT JOIN (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT vdn_label ORDER BY vdn_label), ',') AS vdn_aggregation
-  FROM keepcoding.ivr_calls
-  GROUP BY ivr_id
-) v
-  ON c.ivr_id = v.ivr_id
-LEFT JOIN doc_per_call d
-  ON c.ivr_id = d.ivr_id;
+  calls_ivr_id,
+  MIN(customer_phone) AS customer_phone
+FROM keepcoding.ivr_detail
+GROUP BY calls_ivr_id;
 
 
 
 
--- EJERCICIO 6: CREACIÓN DE ivr_detail CON EL CAMPO customer_phone_aggregation
+-- EJERCICIO 7: Generar el campo billing_account_id
 
 CREATE OR REPLACE TABLE keepcoding.ivr_detail AS
-WITH phone_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT customer_phone ORDER BY customer_phone), ',') AS customer_phone_aggregation
-  FROM keepcoding.ivr_steps
-  GROUP BY ivr_id
-)
 SELECT
-  -- Campos de ivr_calls
-  c.ivr_id,
-  c.phone_number,
-  c.ivr_result,
-  c.vdn_label,
-  c.start_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.start_date)) AS INT64) AS start_date_id,
-  c.end_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.end_date)) AS INT64)   AS end_date_id,
-  c.total_duration,
-  c.customer_segment,
-  c.ivr_language,
-  c.steps_module,
-  c.module_aggregation,
-  v.vdn_aggregation,
-  d.document_type_aggregation,
-  p.customer_phone_aggregation,
-
-  -- Campos de ivr_modules
-  m.module_sequece,
-  m.module_name,
-  m.module_duration,
-  m.module_result,
-
-  -- Campos de ivr_steps
-  s.step_sequence,
-  s.step_name,
-  s.step_result,
-  s.step_description_error,
-  s.document_type,
-  s.document_identification,
-  s.customer_phone,
-  s.billing_account_id
-
-FROM keepcoding.ivr_steps s
-JOIN keepcoding.ivr_modules m
-  ON s.ivr_id = m.ivr_id
- AND s.module_sequece = m.module_sequece
-JOIN keepcoding.ivr_calls c
-  ON m.ivr_id = c.ivr_id
-LEFT JOIN (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT vdn_label ORDER BY vdn_label), ',') AS vdn_aggregation
-  FROM keepcoding.ivr_calls
-  GROUP BY ivr_id
-) v
-  ON c.ivr_id = v.ivr_id
-LEFT JOIN (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT document_type ORDER BY document_type), ',') AS document_type_aggregation
-  FROM keepcoding.ivr_steps
-  GROUP BY ivr_id
-) d
-  ON c.ivr_id = d.ivr_id
-LEFT JOIN phone_per_call p
-  ON c.ivr_id = p.ivr_id;
-  
+  calls_ivr_id,
+  MIN(billing_account_id) AS billing_account_id
+FROM keepcoding.ivr_detail
+GROUP BY calls_ivr_id;
 
 
 
--- EJERCICIO 7: CREACIÓN DE ivr_detail CON EL CAMPO billing_account_id_aggregation
+
+-- EJERCICIO 8: Generar el campo masiva_lg
 
 CREATE OR REPLACE TABLE keepcoding.ivr_detail AS
-WITH billing_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(
-      ARRAY_AGG(DISTINCT billing_account_id ORDER BY billing_account_id), 
-      ','
-    ) AS billing_account_id_aggregation
-  FROM keepcoding.ivr_steps
-  GROUP BY ivr_id
-),
-vdn_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(
-      ARRAY_AGG(DISTINCT vdn_label ORDER BY vdn_label), 
-      ','
-    ) AS vdn_aggregation
-  FROM keepcoding.ivr_calls
-  GROUP BY ivr_id
-),
-doc_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(
-      ARRAY_AGG(DISTINCT document_type ORDER BY document_type), 
-      ','
-    ) AS document_type_aggregation
-  FROM keepcoding.ivr_steps
-  GROUP BY ivr_id
-),
-phone_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(
-      ARRAY_AGG(DISTINCT customer_phone ORDER BY customer_phone), 
-      ','
-    ) AS customer_phone_aggregation
-  FROM keepcoding.ivr_steps
-  GROUP BY ivr_id
-)
 SELECT
-  -- Campos de ivr_calls
-  c.ivr_id,
-  c.phone_number,
-  c.ivr_result,
-  c.vdn_label,
-  c.start_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.start_date)) AS INT64) AS start_date_id,
-  c.end_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.end_date)) AS INT64)   AS end_date_id,
-  c.total_duration,
-  c.customer_segment,
-  c.ivr_language,
-  c.steps_module,
-  c.module_aggregation,
-  v.vdn_aggregation,
-  d.document_type_aggregation,
-  p.customer_phone_aggregation,
-  b.billing_account_id_aggregation,
-
-  -- Campos de ivr_modules
-  m.module_sequece,
-  m.module_name,
-  m.module_duration,
-  m.module_result,
-
-  -- Campos de ivr_steps
-  s.step_sequence,
-  s.step_name,
-  s.step_result,
-  s.step_description_error,
-  s.document_type,
-  s.document_identification,
-  s.customer_phone,
-  s.billing_account_id
-
-FROM keepcoding.ivr_steps s
-JOIN keepcoding.ivr_modules m
-  ON s.ivr_id = m.ivr_id
- AND s.module_sequece = m.module_sequece
-JOIN keepcoding.ivr_calls c
-  ON m.ivr_id = c.ivr_id
-LEFT JOIN vdn_per_call v
-  ON c.ivr_id = v.ivr_id
-LEFT JOIN doc_per_call d
-  ON c.ivr_id = d.ivr_id
-LEFT JOIN phone_per_call p
-  ON c.ivr_id = p.ivr_id
-LEFT JOIN billing_per_call b
-  ON c.ivr_id = b.ivr_id;
+  calls_ivr_id,
+  CASE
+    WHEN SUM(CASE WHEN module_name = 'AVERIA_MASIVA' THEN 1 ELSE 0 END) > 0 
+      THEN 1 
+    ELSE 0
+  END AS masiva_lg
+FROM keepcoding.ivr_detail
+GROUP BY calls_ivr_id;
 
 
 
 
-  -- EJERCICIO 8: CREACIÓN DE ivr_detail CON EL CAMPO total_modules
+-- EJERCICIO 9: Generar el campo info_by_phone_lg
 
 CREATE OR REPLACE TABLE keepcoding.ivr_detail AS
-WITH modules_per_call AS (
-  SELECT
-    ivr_id,
-    COUNT(DISTINCT module_sequece) AS total_modules
-  FROM keepcoding.ivr_modules
-  GROUP BY ivr_id
-),
-vdn_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT vdn_label ORDER BY vdn_label), ',') AS vdn_aggregation
-  FROM keepcoding.ivr_calls
-  GROUP BY ivr_id
-),
-doc_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT document_type ORDER BY document_type), ',') AS document_type_aggregation
-  FROM keepcoding.ivr_steps
-  GROUP BY ivr_id
-),
-phone_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT customer_phone ORDER BY customer_phone), ',') AS customer_phone_aggregation
-  FROM keepcoding.ivr_steps
-  GROUP BY ivr_id
-),
-billing_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT billing_account_id ORDER BY billing_account_id), ',') AS billing_account_id_aggregation
-  FROM keepcoding.ivr_steps
-  GROUP BY ivr_id
-)
 SELECT
-  -- Campos de ivr_calls
-  c.ivr_id,
-  c.phone_number,
-  c.ivr_result,
-  c.vdn_label,
-  c.start_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.start_date)) AS INT64) AS start_date_id,
-  c.end_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.end_date)) AS INT64)   AS end_date_id,
-  c.total_duration,
-  c.customer_segment,
-  c.ivr_language,
-  c.steps_module,
-  c.module_aggregation,
-  v.vdn_aggregation,
-  d.document_type_aggregation,
-  p.customer_phone_aggregation,
-  b.billing_account_id_aggregation,
-  mpc.total_modules,
-
-  -- Campos de ivr_modules
-  m.module_sequece,
-  m.module_name,
-  m.module_duration,
-  m.module_result,
-
-  -- Campos de ivr_steps
-  s.step_sequence,
-  s.step_name,
-  s.step_result,
-  s.step_description_error,
-  s.document_type,
-  s.document_identification,
-  s.customer_phone,
-  s.billing_account_id
-
-FROM keepcoding.ivr_steps s
-JOIN keepcoding.ivr_modules m
-  ON s.ivr_id = m.ivr_id
- AND s.module_sequece = m.module_sequece
-JOIN keepcoding.ivr_calls c
-  ON m.ivr_id = c.ivr_id
-LEFT JOIN vdn_per_call v
-  ON c.ivr_id = v.ivr_id
-LEFT JOIN doc_per_call d
-  ON c.ivr_id = d.ivr_id
-LEFT JOIN phone_per_call p
-  ON c.ivr_id = p.ivr_id
-LEFT JOIN billing_per_call b
-  ON c.ivr_id = b.ivr_id
-LEFT JOIN modules_per_call mpc
-  ON c.ivr_id = mpc.ivr_id;
+  calls_ivr_id,
+  CASE
+    WHEN SUM(CASE 
+                WHEN step_name = 'CUSTOMERINFOBYPHONE.TX' 
+                 AND step_result = 'OK' 
+                THEN 1 ELSE 0 
+              END) > 0 
+      THEN 1 
+    ELSE 0
+  END AS info_by_phone_lg
+FROM keepcoding.ivr_detail
+GROUP BY calls_ivr_id;
 
 
 
 
--- EJERCICIO 9: CREACIÓN DE ivr_detail CON EL CAMPO total_steps
+-- EJERCICIO 10: Generar el campo info_by_dni_lg
 
-  CREATE OR REPLACE TABLE keepcoding.ivr_detail AS
-WITH steps_per_call AS (
-  SELECT
-    ivr_id,
-    COUNT(DISTINCT step_sequence) AS total_steps
-  FROM keepcoding.ivr_steps
-  GROUP BY ivr_id
-),
-modules_per_call AS (
-  SELECT
-    ivr_id,
-    COUNT(DISTINCT module_sequece) AS total_modules
-  FROM keepcoding.ivr_modules
-  GROUP BY ivr_id
-),
-vdn_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT vdn_label ORDER BY vdn_label), ',') AS vdn_aggregation
-  FROM keepcoding.ivr_calls
-  GROUP BY ivr_id
-),
-doc_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT document_type ORDER BY document_type), ',') AS document_type_aggregation
-  FROM keepcoding.ivr_steps
-  GROUP BY ivr_id
-),
-phone_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT customer_phone ORDER BY customer_phone), ',') AS customer_phone_aggregation
-  FROM keepcoding.ivr_steps
-  GROUP BY ivr_id
-),
-billing_per_call AS (
-  SELECT
-    ivr_id,
-    ARRAY_TO_STRING(ARRAY_AGG(DISTINCT billing_account_id ORDER BY billing_account_id), ',') AS billing_account_id_aggregation
-  FROM keepcoding.ivr_steps
-  GROUP BY ivr_id
-)
+CREATE OR REPLACE TABLE keepcoding.ivr_detail AS
 SELECT
-  -- Campos de ivr_calls
-  c.ivr_id,
-  c.phone_number,
-  c.ivr_result,
-  c.vdn_label,
-  c.start_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.start_date)) AS INT64) AS start_date_id,
-  c.end_date,
-  CAST(FORMAT_DATE('%Y%m%d', DATE(c.end_date)) AS INT64)   AS end_date_id,
-  c.total_duration,
-  c.customer_segment,
-  c.ivr_language,
-  c.steps_module,
-  c.module_aggregation,
-  v.vdn_aggregation,
-  d.document_type_aggregation,
-  p.customer_phone_aggregation,
-  b.billing_account_id_aggregation,
-  mpc.total_modules,
-  spc.total_steps,
+  calls_ivr_id,
+  CASE
+    WHEN SUM(CASE 
+                WHEN step_name = 'CUSTOMERINFOBYDNI.TX' 
+                 AND step_result = 'OK' 
+                THEN 1 ELSE 0 
+              END) > 0 
+      THEN 1 
+    ELSE 0
+  END AS info_by_dni_lg
+FROM keepcoding.ivr_detail
+GROUP BY calls_ivr_id;
 
-  -- Campos de ivr_modules
-  m.module_sequece,
-  m.module_name,
-  m.module_duration,
-  m.module_result,
 
-  -- Campos de ivr_steps
-  s.step_sequence,
-  s.step_name,
-  s.step_result,
-  s.step_description_error,
-  s.document_type,
-  s.document_identification,
-  s.customer_phone,
-  s.billing_account_id
 
-FROM keepcoding.ivr_steps s
-JOIN keepcoding.ivr_modules m
-  ON s.ivr_id = m.ivr_id
- AND s.module_sequece = m.module_sequece
-JOIN keepcoding.ivr_calls c
-  ON m.ivr_id = c.ivr_id
-LEFT JOIN vdn_per_call v
-  ON c.ivr_id = v.ivr_id
-LEFT JOIN doc_per_call d
-  ON c.ivr_id = d.ivr_id
-LEFT JOIN phone_per_call p
-  ON c.ivr_id = p.ivr_id
-LEFT JOIN billing_per_call b
-  ON c.ivr_id = b.ivr_id
-LEFT JOIN modules_per_call mpc
-  ON c.ivr_id = mpc.ivr_id
-LEFT JOIN steps_per_call spc
-  ON c.ivr_id = spc.ivr_id;
  
+-- EJERCICIO 11: Generar los campos repeated_phone_24H y cause_recall_phone_24H
+
+CREATE OR REPLACE TABLE keepcoding.ivr_detail AS
+WITH base AS (
+  SELECT
+    calls_ivr_id,
+    calls_phone_number,
+    calls_end_date,
+    LAG(calls_end_date) OVER (PARTITION BY calls_phone_number ORDER BY calls_end_date) AS prev_call,
+    LEAD(calls_end_date) OVER (PARTITION BY calls_phone_number ORDER BY calls_end_date) AS next_call
+  FROM keepcoding.ivr_detail
+)
+SELECT
+  calls_ivr_id,
+  CASE 
+    WHEN prev_call IS NOT NULL 
+         AND TIMESTAMP_DIFF(calls_end_date, prev_call, HOUR) <= 24 
+    THEN 1 ELSE 0 
+  END AS repeated_phone_24H,
+  CASE 
+    WHEN next_call IS NOT NULL 
+         AND TIMESTAMP_DIFF(next_call, calls_end_date, HOUR) <= 24 
+    THEN 1 ELSE 0 
+  END AS cause_recall_phone_24H
+FROM base;
 
 
 
--- EJERCICIO 12: CREAR TABLA ivr_summary
--- Usé sólo ROW_NUMBER y QUALIFY que vimos - Hasta aquí legué, no supe como investigar más para completarlo
+
+-- EJERCICIO 12: Crear tabla ivr_summary
+-- Lo intenté hacer con ROW_NUMBER pero no me salió y ya no tengo más tiempo
 
 CREATE OR REPLACE TABLE keepcoding.ivr_summary AS
 SELECT
-  CAST(ivr_id AS STRING) AS ivr_id,
-  phone_number,
-  ivr_result,
-  vdn_aggregation,
-  start_date,
-  end_date,
-  total_duration,
-  customer_segment,
-  ivr_language,
-  steps_module,
-  module_aggregation,
-  document_type_aggregation AS document_type,
-  document_identification,
-  customer_phone_aggregation AS customer_phone,
-  billing_account_id_aggregation AS billing_account_id,
-
-  -- placeholders de columnas que se crearán en ejercicios posteriores
-  NULL AS masiva_lg,
-  NULL AS info_by_phone_lg,
-  NULL AS info_by_dni_lg,
-  NULL AS repeated_phone_24H,
-  NULL AS cause_recall_phone_24H,
-
-  ROW_NUMBER() OVER (PARTITION BY CAST(ivr_id AS STRING) ORDER BY end_date DESC) AS rn
+  calls_ivr_id              AS ivr_id,
+  MIN(calls_phone_number)   AS phone_number,
+  MIN(calls_ivr_result)     AS ivr_result,
+  MIN(vdn_aggregation)      AS vdn_aggregation,
+  MIN(calls_start_date)     AS start_date,
+  MAX(calls_end_date)       AS end_date,
+  MAX(calls_total_duration) AS total_duration,
+  MIN(calls_customer_segment) AS customer_segment,
+  MIN(calls_ivr_language)   AS ivr_language,
+  MAX(calls_steps_module)   AS steps_module,
+  MAX(calls_module_aggregation) AS module_aggregation,
+  MIN(document_type)        AS document_type,
+  MIN(document_identification) AS document_identification,
+  MIN(customer_phone)       AS customer_phone,
+  MIN(billing_account_id)   AS billing_account_id,
+  MAX(masiva_lg)            AS masiva_lg,
+  MAX(info_by_phone_lg)     AS info_by_phone_lg,
+  MAX(info_by_dni_lg)       AS info_by_dni_lg,
+  MAX(repeated_phone_24H)   AS repeated_phone_24H,
+  MAX(cause_recall_phone_24H) AS cause_recall_phone_24H
 FROM keepcoding.ivr_detail
-QUALIFY rn = 1;
+GROUP BY calls_ivr_id;
+
+
+
+
+-- EJERCICIO 13: CREAR FUNCIÓN DE LIMPIEZA DE ENTEROS
+--Encontré la función clean_integer
+
+CREATE OR REPLACE FUNCTION keepcoding.clean_integer(val INT64)
+RETURNS INT64
+AS (
+  IFNULL(val, -999999)
+);
